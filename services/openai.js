@@ -22,12 +22,12 @@ const client = axios.create({
   timeout: config.OPENAI_TIMEOUT,
   headers: {
     'Accept-Encoding': 'gzip, deflate, compress',
-    'Authorization': `Bearer ${config.AZURE_OPENAI_API_KEY}`,
+    'Authorization': `Bearer ${config.AZURE_OPENAI_KEY}`,
   },
 });
 
 client.interceptors.request.use((c) => {
-  c.headers.Authorization = `Bearer ${config.OPENAI_API_KEY}`;
+  c.headers.Authorization = `Bearer ${config.AZURE_OPENAI_KEY}`;
   return handleRequest(c);
 });
 
