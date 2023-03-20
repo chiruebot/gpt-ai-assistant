@@ -22,6 +22,7 @@ const client = axios.create({
   timeout: config.OPENAI_TIMEOUT,
   headers: {
     'Accept-Encoding': 'gzip, deflate, compress',
+    'Authorization': `Bearer ${config.AZURE_OPENAI_API_KEY}`,
   },
 });
 
