@@ -17,16 +17,22 @@ export const IMAGE_SIZE_1024 = '1024x1024';
 export const MODEL_GPT_3_5_TURBO = 'gpt-3.5-turbo';
 export const MODEL_WHISPER_1 = 'whisper-1';
 
+import { CognitiveServicesCredentials } from '@azure/ms-rest-azure-js';  
+import { LanguageConversation } from '@azure/cognitiveservices-language-conversationservice';  
+  
+const credentials = new CognitiveServicesCredentials('1c90732a62b342dfa4f811f7f2c30855');  
+const client = new LanguageConversation(credentials, 'eastus');  
+
 const client = axios.create({
-  baseURL: 'https://api.openai.com',
-  timeout: config.OPENAI_TIMEOUT,
+  baseURL: 'https://chibot.openai.azure.com/openai/deployments/ChiBot/completions?api-version=2022-12-01',
+  timeout: config.AZURE_OPENAI_TIMEOUT,
   headers: {
     'Accept-Encoding': 'gzip, deflate, compress',
   },
 });
 
 client.interceptors.request.use((c) => {
-  c.headers.Authorization = `Bearer ${config.OPENAI_API_KEY}`;
+  c.headers.Authorization = `Bearer ${config.AZURE_OPENAI_API_KEY}`;
   return handleRequest(c);
 });
 
@@ -38,12 +44,12 @@ client.interceptors.response.use(handleFulfilled, (err) => {
 });
 
 const createChatCompletion = ({
-  model = config.OPENAI_COMPLETION_MODEL,
+  model = config.AZURE_OPENAI_COMPLETION_MODEL,
   messages,
-  temperature = config.OPENAI_COMPLETION_TEMPERATURE,
-  maxTokens = config.OPENAI_COMPLETION_MAX_TOKENS,
-  frequencyPenalty = config.OPENAI_COMPLETION_FREQUENCY_PENALTY,
-  presencePenalty = config.OPENAI_COMPLETION_PRESENCE_PENALTY,
+  temperature = config.AZURE_OPENAI_COMPLETION_TEMPERATURE,
+  maxTokens = config.AZURE_OPENAI_COMPLETION_MAX_TOKENS,
+  frequencyPenalty = config.AZURE_OPENAI_COMPLETION_FREQUENCY_PENALTY,
+  presencePenalty = config.AZURE_OPENAI_COMPLETION_PRESENCE_PENALTY,
 }) => client.post('/v1/chat/completions', {
   model,
   messages,
@@ -54,12 +60,12 @@ const createChatCompletion = ({
 });
 
 const createTextCompletion = ({
-  model = config.OPENAI_COMPLETION_MODEL,
+  model = config.AZURE_OPENAI_COMPLETION_MODEL,
   prompt,
-  temperature = config.OPENAI_COMPLETION_TEMPERATURE,
-  maxTokens = config.OPENAI_COMPLETION_MAX_TOKENS,
-  frequencyPenalty = config.OPENAI_COMPLETION_FREQUENCY_PENALTY,
-  presencePenalty = config.OPENAI_COMPLETION_PRESENCE_PENALTY,
+  temperature = config.AZURE_OPENAI_COMPLETION_TEMPERATURE,
+  maxTokens = config.AZURE_OPENAI_COMPLETION_MAX_TOKENS,
+  frequencyPenalty = config.AZURE_OPENAI_COMPLETION_FREQUENCY_PENALTY,
+  presencePenalty = config.AZURE_OPENAI_COMPLETION_PRESENCE_PENALTY,
   stop = [
     ` ${ROLE_AI}:`,
     ` ${ROLE_HUMAN}:`,
