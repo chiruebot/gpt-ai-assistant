@@ -37,20 +37,51 @@ client.interceptors.response.use(handleFulfilled, (err) => {
   return handleRejected(err);
 });
 
-const createChatCompletion = ({
-  model = config.OPENAI_COMPLETION_MODEL,
-  messages,
-  temperature = config.OPENAI_COMPLETION_TEMPERATURE,
-  maxTokens = config.OPENAI_COMPLETION_MAX_TOKENS,
-  frequencyPenalty = config.OPENAI_COMPLETION_FREQUENCY_PENALTY,
-  presencePenalty = config.OPENAI_COMPLETION_PRESENCE_PENALTY,
-}) => client.post('/v1/chat/completions', {
-  model,
-  messages,
-  temperature,
-  max_tokens: maxTokens,
-  frequency_penalty: frequencyPenalty,
-  presence_penalty: presencePenalty,
+const createChatCompletion = ({    
+  model = config.OPENAI_COMPLETION_MODEL,    
+  messages,    
+  temperature = config.OPENAI_COMPLETION_TEMPERATURE,    
+  maxTokens = config.OPENAI_COMPLETION_MAX_TOKENS,    
+  frequencyPenalty = config.OPENAI_COMPLETION_FREQUENCY_PENALTY,    
+  presencePenalty = config.OPENAI_COMPLETION_PRESENCE_PENALTY,    
+  stop = [    
+    ` ${ROLE_AI}:`,    
+    ` ${ROLE_HUMAN}:`,    
+  ],    
+  apiType = 'azure',  
+  apiBase = 'https://chibot.openai.azure.com/',  
+  apiVersion = '2023-03-15-preview',  
+  apiKey = config.OPENAI_API_KEY,  
+}) => {  
+  openai.api_type = apiType;  
+  openai.api_base = apiBase;  
+  openai.api_version = apiVersion;  
+  openai.api_key = apiKey;  
+  
+  return openai.Completion.create({  
+    engine: model,  
+    prompt: messages.join(''),  
+    temperature,  
+    max_tokens: maxTokens,  
+    top_p: 0.95,  
+    frequency_penalty: frequencyPenalty,  
+    presence_penalty: presencePenalty,  
+    stop,  
+  });  
+};  
+
+const response = await createChatCompletion({  
+  model: 'gpt-35-turbo',  
+  messages: [],  
+  temperature: 0.7,  
+  maxTokens: 2500,  
+  frequencyPenalty: 0,  
+  presencePenalty: 0,  
+  stop: null,  
+  apiType: 'azure',  
+  apiBase: 'https://chibot.openai.azure.com/',  
+  apiVersion: '2023-03-15-preview',  
+  apiKey: process.env.OPENAI_API_KEY,  
 });
 
 const createTextCompletion = ({
